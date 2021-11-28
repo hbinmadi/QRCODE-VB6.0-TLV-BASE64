@@ -1,0 +1,18 @@
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QrCodeBase64Gen]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[QrCodeBase64Gen]
+
+go
+
+CREATE Procedure [dbo].[QrCodeBase64Gen]
+	@HexVal varchar(500)
+as
+
+SET ARITHABORT ON
+SELECT
+    CAST(N'' AS XML).value(
+          'xs:base64Binary(xs:hexBinary(sql:column("bin")))'
+        , 'VARCHAR(MAX)'
+    )   Base64Encoding
+FROM (
+    SELECT @HexVal AS bin
+) AS bin_sql_server_temp;
